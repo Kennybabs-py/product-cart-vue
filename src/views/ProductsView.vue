@@ -1,7 +1,14 @@
 <script setup>
 import ProductCard from '@/components/ProductCard.vue'
 
-const props = defineProps(['inventory', 'addToCart'])
+import { storeToRefs } from 'pinia'
+import { useInventoryStore } from '@/stores/inventory'
+
+const store = useInventoryStore()
+
+const { inventory } = storeToRefs(store)
+
+const { addToCart } = store
 </script>
 
 <template>
@@ -10,11 +17,11 @@ const props = defineProps(['inventory', 'addToCart'])
 
     <div class="card-container">
       <ProductCard
-        v-for="(product, index) in props.inventory.slice(0, 6)"
+        v-for="(product, index) in inventory.slice(0, 6)"
         :key="product.id"
         :index="index"
         :product="product"
-        :addToCart="props.addToCart"
+        :addToCart="addToCart"
       />
     </div>
   </main>

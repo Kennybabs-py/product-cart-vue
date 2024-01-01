@@ -1,31 +1,21 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
+import { storeToRefs } from 'pinia'
 
 import SideBar from '@/components/SideBar.vue'
 
-import food from './food.json'
+import { useInventoryStore } from '@/stores/inventory'
 
-const inventory = ref(food)
 const showSidebar = ref(false)
-const cart = ref({})
 
-function addToCart(name, quantity) {
-  if (!cart.value[name]) cart.value[name] = 0
-  cart.value[name] += quantity
-}
+const store = useInventoryStore()
+
+const { totalCartQuantity } = storeToRefs(store)
 
 function toggleSidebar() {
   showSidebar.value = !showSidebar.value
 }
-
-function removeCartItem(name) {
-  delete cart.value[name]
-}
-
-const totalCartQuantity = computed(() => {
-  return Object.values(cart.value).reduce((acc, curr) => acc + curr, 0)
-})
 </script>
 
 <template>
@@ -49,13 +39,7 @@ const totalCartQuantity = computed(() => {
     </button>
   </header>
 
-  <SideBar
-    v-if="showSidebar"
-    :toggle="toggleSidebar"
-    :cart="cart"
-    :remove="removeCartItem"
-    :inventory="inventory"
-  />
+  <SideBar v-if="showSidebar" :toggle="toggleSidebar" />
 
-  <RouterView :inventory="inventory" :addToCart="addToCart" />
+  <RouterView />
 </template>

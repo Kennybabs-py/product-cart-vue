@@ -1,18 +1,22 @@
 <script setup>
-const props = defineProps(['toggle', 'cart', 'inventory', 'remove'])
+import { storeToRefs } from 'pinia'
+import { useInventoryStore } from '@/stores/inventory'
 
-console.log(props.cart)
+const props = defineProps(['toggle'])
+
+const store = useInventoryStore()
+
+const { cart, inventory } = storeToRefs(store)
+const { removeCartItem } = store
 
 function getPrice(name) {
-  if (!props.cart) return
-
-  return props.inventory.find((item) => item.name === name).price.USD
+  return inventory.value.find((item) => item.name === name).price.USD
 }
 
 function calculateTotal() {
-  if (!props.cart) return
+  if (!cart.value) return
 
-  const total = Object.entries(props.cart).reduce(
+  const total = Object.entries(cart.value).reduce(
     (acc, curr) => acc + curr[1] * getPrice(curr[0]),
     0
   )
@@ -49,7 +53,7 @@ function calculateTotal() {
           </thead>
 
           <tbody>
-            <tr v-for="(quantity, key, index) in props.cart" :key="index">
+            <tr v-for="(quantity, key, index) in cart" :key="index">
               <td>
                 <i class="icofont-carrot icofont-3x"></i>
               </td>
@@ -58,7 +62,7 @@ function calculateTotal() {
               <td class="center">{{ quantity }}</td>
               <td>${{ (quantity * getPrice(key)).toFixed(2) }}</td>
               <td class="center">
-                <button @click="props.remove(key)" class="btn btn-light cart-remove">
+                <button @click="removeCartItem(key)" class="btn btn-light cart-remove">
                   &times;
                 </button>
               </td>
@@ -66,7 +70,7 @@ function calculateTotal() {
           </tbody>
         </table>
 
-        <p class="center" v-if="!Object.keys(props.cart).length">
+        <p class="center" v-if="!Object.keys(cart).length">
           <em>No items in cart</em>
         </p>
         <div class="spread">
