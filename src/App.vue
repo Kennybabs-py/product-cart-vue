@@ -1,42 +1,31 @@
-<script>
+<script setup>
+import { ref, computed } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
+
 import SideBar from '@/components/SideBar.vue'
 
 import food from './food.json'
 
-export default {
-  components: {
-    RouterLink: RouterLink,
-    RouterView: RouterView,
-    SideBar: SideBar
-  },
+const inventory = ref(food)
+const showSidebar = ref(false)
+const cart = ref({})
 
-  data() {
-    return {
-      inventory: food,
-      showSidebar: false,
-      cart: {}
-    }
-  },
-  methods: {
-    addToCart(name, quantity) {
-      if (!this.cart[name]) this.cart[name] = 0
-      this.cart[name] += quantity
-    },
-    toggleSidebar() {
-      this.showSidebar = !this.showSidebar
-    },
-
-    removeCartItem(name) {
-      delete this.cart[name]
-    }
-  },
-  computed: {
-    totalCartQuantity() {
-      return Object.values(this.cart).reduce((acc, curr) => acc + curr, 0)
-    }
-  }
+function addToCart(name, quantity) {
+  if (!cart.value[name]) cart.value[name] = 0
+  cart.value[name] += quantity
 }
+
+function toggleSidebar() {
+  showSidebar.value = !showSidebar.value
+}
+
+function removeCartItem(name) {
+  delete cart.value[name]
+}
+
+const totalCartQuantity = computed(() => {
+  return Object.values(cart.value).reduce((acc, curr) => acc + curr, 0)
+})
 </script>
 
 <template>
@@ -64,8 +53,8 @@ export default {
     v-if="showSidebar"
     :toggle="toggleSidebar"
     :cart="cart"
-    :inventory="inventory"
     :remove="removeCartItem"
+    :inventory="inventory"
   />
 
   <RouterView :inventory="inventory" :addToCart="addToCart" />

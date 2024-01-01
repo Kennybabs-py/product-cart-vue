@@ -1,21 +1,23 @@
-<script>
-export default {
-  props: ['toggle', 'cart', 'inventory', 'remove'],
+<script setup>
+const props = defineProps(['toggle', 'cart', 'inventory', 'remove'])
 
-  methods: {
-    getPrice(key) {
-      return this.inventory.find((item) => item.name === key).price.USD
-    },
+console.log(props.cart)
 
-    calculateTotal() {
-      const total = Object.entries(this.cart).reduce(
-        (acc, curr) => acc + curr[1] * this.getPrice(curr[0]),
-        0
-      )
+function getPrice(name) {
+  if (!props.cart) return
 
-      return total.toFixed(2)
-    }
-  }
+  return props.inventory.find((item) => item.name === name).price.USD
+}
+
+function calculateTotal() {
+  if (!props.cart) return
+
+  const total = Object.entries(props.cart).reduce(
+    (acc, curr) => acc + curr[1] * getPrice(curr[0]),
+    0
+  )
+
+  return total.toFixed(2)
 }
 </script>
 
@@ -27,7 +29,7 @@ export default {
           Cart
           <i class="icofont-cart-alt icofont-1x"></i>
         </span>
-        <button class="cart-close" @click="toggle">&times;</button>
+        <button class="cart-close" @click="props.toggle">&times;</button>
       </h1>
       <div class="cart-body">
         <table class="cart-table">
@@ -47,7 +49,7 @@ export default {
           </thead>
 
           <tbody>
-            <tr v-for="(quantity, key, index) in cart" :key="index">
+            <tr v-for="(quantity, key, index) in props.cart" :key="index">
               <td>
                 <i class="icofont-carrot icofont-3x"></i>
               </td>
@@ -56,13 +58,15 @@ export default {
               <td class="center">{{ quantity }}</td>
               <td>${{ (quantity * getPrice(key)).toFixed(2) }}</td>
               <td class="center">
-                <button @click="remove(key)" class="btn btn-light cart-remove">&times;</button>
+                <button @click="props.remove(key)" class="btn btn-light cart-remove">
+                  &times;
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
 
-        <p class="center" v-if="!Object.keys(cart).length">
+        <p class="center" v-if="!Object.keys(props.cart).length">
           <em>No items in cart</em>
         </p>
         <div class="spread">

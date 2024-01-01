@@ -1,17 +1,7 @@
-<script>
+<script setup>
 import ProductCard from '@/components/ProductCard.vue'
 
-export default {
-  components: { ProductCard: ProductCard },
-
-  props: ['inventory', 'addToCart'],
-
-  data: function () {
-    return {
-      quantity: 0
-    }
-  }
-}
+const props = defineProps(['inventory', 'addToCart'])
 </script>
 
 <template>
@@ -20,11 +10,11 @@ export default {
 
     <div class="card-container">
       <ProductCard
-        v-for="(product, index) in inventory.slice(0, 6)"
+        v-for="(product, index) in props.inventory.slice(0, 6)"
         :key="product.id"
         :index="index"
         :product="product"
-        :addToCart="addToCart"
+        :addToCart="props.addToCart"
       />
     </div>
   </main>
