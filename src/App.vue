@@ -4,7 +4,6 @@ import { RouterLink, RouterView } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import SideBar from '@/components/SideBar.vue'
-
 import { useInventoryStore } from '@/stores/inventory'
 
 const showSidebar = ref(false)
